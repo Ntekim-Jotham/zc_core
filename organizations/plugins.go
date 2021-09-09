@@ -117,6 +117,7 @@ func GetOrganizationPlugins(w http.ResponseWriter, r *http.Request) {
 		utils.GetError(errors.New("You're not authorized to access this resources"), http.StatusUnauthorized, w)
 		return
 	}
+	
 
 	utils.GetSuccess("Plugins Retrived successfully", docs, w)
 }

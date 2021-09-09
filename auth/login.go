@@ -21,6 +21,8 @@ var (
 	InvalidCredentials = errors.New("Invalid login credentials, confirm and try again")
 )
 
+
+
 func LoginIn(response http.ResponseWriter, request *http.Request) {
 	response.Header().Add("content-type", "application/json")
 
@@ -59,3 +61,5 @@ func LoginIn(response http.ResponseWriter, request *http.Request) {
 	}
 	utils.GetSuccess("login successful", token, response)
 }
+
+

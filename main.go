@@ -105,7 +105,7 @@ func main() {
 	if port == "" {
 		port = "8000"
 	}
-
+   
 	r := Router(Server)
 
 	c := cors.New(cors.Options{
@@ -123,8 +123,11 @@ func main() {
 	fmt.Println("Socket Served")
 	defer Server.Close()
 
+
 	fmt.Println("Zuri Chat API running on port ", port)
 	log.Fatal(srv.ListenAndServe())
+
+
 }
 
 func LoadApp(w http.ResponseWriter, r *http.Request) {

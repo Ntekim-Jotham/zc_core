@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"zuri.chat/zccore/utils"
+
 )
 
 func GetOrganization(w http.ResponseWriter, r *http.Request) {
@@ -111,20 +112,35 @@ func DeleteOrganization(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	orgId := mux.Vars(r)["id"]
 
-	collection := "organizations"
+	 collection, member_collection :=  "organizations", "members"
 
 	response, err := utils.DeleteOneMongoDoc(collection, orgId)
-
 	if err != nil {
 		utils.GetError(err, http.StatusInternalServerError, w)
 		return
 	}
-
+    
 	if response.DeletedCount == 0 {
 		utils.GetError(errors.New("operation failed"), http.StatusInternalServerError, w)
 		return
 	}
+	
+	orgMembers, err := utils.GetMongoDbDocs(member_collection, bson.M{"org_id": orgId})
+	if err != nil {
+		utils.GetError(err, http.StatusInternalServerError, w)
+	}
+	// fmt.Println(orgMembers)
 
+	for _, v := range orgMembers {
+		membersOrgId := make(map[string]interface{})
+		membersOrgId["org_id"] = v["org_id"]
+		_, err := utils.UpdateManyMongoDbDocs(member_collection, membersOrgId, bson.M{"org_id": ""})
+		if err != nil {
+			utils.GetError(errors.New("user update failed"), http.StatusInternalServerError, w)
+			return
+		}
+	}
+	
 	utils.GetSuccess("organization deleted successfully", nil, w)
 }
 
